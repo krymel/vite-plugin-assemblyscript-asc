@@ -41,6 +41,10 @@ import { add } from './as/build/assembly'
 console.log(add(3, 4)) // prints: '7'
 ```
 
+## Example project
+
+If you'd like to copy & paste, the [`example`](https://github.com/krymel/vite-plugin-assemblyscript-asc/tree/main/example) folder contains a fully working example project layout.
+
 ## Default project layout
 
 The default plugin configuration assumes that the AssemblyScript codebase is located in `src/as` and that the generated WebAssembly module is stored as `build/assembly.wasm`:
