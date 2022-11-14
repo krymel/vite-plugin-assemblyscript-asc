@@ -1,4 +1,4 @@
-# vite-plugin-assemblyscript
+# vite-plugin-assemblyscript-asc
 
 [![Test Status](https://img.shields.io/github/workflow/status/krymel/vite-plugin-assemblyscript/Test?style=flat-square)](https://github.com/krymel/vite-plugin-assemblyscript/actions?query=workflow%3ATest)
 [![npm](https://img.shields.io/npm/v/vite-plugin-assemblyscript?style=flat-square)](https://www.npmjs.com/package/vite-plugin-assemblyscript)
@@ -13,14 +13,14 @@ and the typical `debug` and `release` build variants mapped to `vite dev` and `v
 Supports Vite 3.x. Just install it:
 
 ```bash
-yarn add -D vite-plugin-assemblyscript
+yarn add -D vite-plugin-assemblyscript-asc
 ```
 
 ## Vite integration usage
 
 `vite.config.ts`
 ```typescript
-import assemblyScriptPlugin from "vite-plugin-assemblyscript"
+import assemblyScriptPlugin from "vite-plugin-assemblyscript-asc"
 
 export default defineConfig({
   plugins: [
@@ -110,7 +110,7 @@ by providing the necessary configuration options:
 
 `vite.config.ts`
 ```typescript
-import assemblyScriptPlugin from "vite-plugin-assemblyscript"
+import assemblyScriptPlugin from "vite-plugin-assemblyscript-asc"
 
 export default defineConfig({
   plugins: [
