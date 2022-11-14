@@ -7,7 +7,7 @@ import './index.css';
 const rootEl = document.getElementById('root') as HTMLElement
 
 const App = () => {
-    const [result, setResult] = createSignal();
+    const [result, setResult] = createSignal<number>();
 
     createEffect(() => {
       setResult(add(2, 3))
