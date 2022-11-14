@@ -1,5 +1,5 @@
 {
-  "name": "vite-plugin-assemblyscript",
+  "name": "vite-plugin-assemblyscript-asc",
   "version": "1.0.0",
   "description": "AssemblyScript plugin for Vite: HMR and source maps for AssemblyScript and synchronous WebAssembly module integration with ESM bindings",
   "main": "dist/index.js",
@@ -7,7 +7,7 @@
     "import": "./exports/import.mjs",
     "require": "./exports/require.cjs"
   },
-  "repository": "https://github.com/krymel/vite-plugin-assemblyscript",
+  "repository": "https://github.com/krymel/vite-plugin-assemblyscript-asc",
   "author": "krymel <krymel@mailbox.org>",
   "license": "MIT",
   "keywords": [
