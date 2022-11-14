@@ -9,14 +9,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: ["16", "18"]
-    name: Test on Node.js ${{ matrix.node }}
+        version: [16, 18]
+        os: [ubuntu-latest, windows-latest]
+    name: Test on Node.js ${{ matrix.version }} on ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node }}
+          node-version: ${{ matrix.version }}
       - name: Install dependencies
         run: yarn --frozen-lockfile
       - name: Build

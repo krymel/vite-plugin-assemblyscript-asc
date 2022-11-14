@@ -1,7 +1,7 @@
 import type { Plugin } from "vite";
 import { spawnSync } from "child_process";
-import { lstatSync, existsSync, mkdirSync, copyFileSync } from "fs";
-import { dirname, sep } from "path";
+import { lstatSync, existsSync } from "fs";
+import { sep } from "path";
 
 interface AssemblyScriptPluginOptions {
   srcMatch: string;
@@ -19,14 +19,6 @@ const defaultOptions: AssemblyScriptPluginOptions = {
   configFile: "asconfig.json",
   targetWasmFile: "build/assembly.wasm",
   distFolder: "dist",
-};
-
-const copySourceMap = (options: AssemblyScriptPluginOptions) => {
-  const sourceMapFile = `${options.projectRoot}${sep}${options.targetWasmFile}.map`;
-  const distSourceMapFile = `${options.distFolder}${sep}${options.projectRoot}${sep}${options.targetWasmFile}.map`;
-  const distSourceMapFolder = dirname(distSourceMapFile);
-  mkdirSync(distSourceMapFolder, { recursive: true });
-  copyFileSync(sourceMapFile, distSourceMapFile);
 };
 
 const spawnAscCmd = (baseScriptCmd: string, mode: "debug" | "release") => {
@@ -81,12 +73,10 @@ export default function assemblyScriptPlugin(
         file.indexOf(`${options.projectRoot}${sep}${options.srcMatch}`) > -1
       ) {
         spawnAscCmd(baseScriptCmd, "debug");
-        copySourceMap(options);
       }
     },
     buildStart() {
       spawnAscCmd(baseScriptCmd, "release");
-      copySourceMap(options);
     },
   };
 }

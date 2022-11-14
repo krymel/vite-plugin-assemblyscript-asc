@@ -32,10 +32,12 @@ async function buildAndStartProdServer(
     build: {
       target: "esnext",
     },
-    plugins: [vitePluginAssemblyScript({
-      projectRoot: 'e2e/src/as',
-      ...config
-    })],
+    plugins: [
+      vitePluginAssemblyScript({
+        projectRoot: "e2e/src/as",
+        ...config,
+      }),
+    ],
     logLevel: "error",
   });
 
@@ -92,9 +94,11 @@ async function startDevServer(vitePackages: VitePackages): Promise<string> {
 
   const devServer = await vite.createServer({
     root: __dirname,
-    plugins: [vitePluginAssemblyScript({
-      projectRoot: 'e2e/src/as'
-    })],
+    plugins: [
+      vitePluginAssemblyScript({
+        projectRoot: "e2e/src/as",
+      }),
+    ],
     logLevel: "error",
   });
 
@@ -185,40 +189,39 @@ export function runTests(viteVersion: number, vitePackages: VitePackages) {
   jest.setTimeout(60000);
 
   describe(`E2E test for Vite ${viteVersion}`, () => {
-
     it(`vite ${viteVersion}: should fail with error that the source directory does not exist`, async () => {
       try {
-        await buildAndStartProdServer(
-          vitePackages,  { 
-            projectRoot: 'foobar',
-          }
-        );
+        await buildAndStartProdServer(vitePackages, {
+          projectRoot: "foobar",
+        });
       } catch (e) {
-        expect(e.message).toEqual('[vite-plugin-assemblyscript] projectRoot: foobar does not exist')
+        expect(e.message).toEqual(
+          "[vite-plugin-assemblyscript] projectRoot: foobar does not exist"
+        );
       }
     });
 
     it(`vite ${viteVersion}: should fail with error that the source directory is not a directory`, async () => {
       try {
-        await buildAndStartProdServer(
-          vitePackages,  { 
-            projectRoot: 'e2e/src/as/asconfig.json',
-          }
-        );
+        await buildAndStartProdServer(vitePackages, {
+          projectRoot: "e2e/src/as/asconfig.json",
+        });
       } catch (e) {
-        expect(e.message).toEqual('[vite-plugin-assemblyscript] projectRoot: e2e/src/as/asconfig.json is not a folder')
+        expect(e.message).toEqual(
+          "[vite-plugin-assemblyscript] projectRoot: e2e/src/as/asconfig.json is not a folder"
+        );
       }
     });
 
     it(`vite ${viteVersion}: should fail with error that the srcEntryFile does not exist`, async () => {
       try {
-        await buildAndStartProdServer(
-          vitePackages,  { 
-            srcEntryFile: 'build/release.wasm'
-          }
-        );
+        await buildAndStartProdServer(vitePackages, {
+          srcEntryFile: "build/release.wasm",
+        });
       } catch (e) {
-        expect(e.message).toEqual('[vite-plugin-assemblyscript] srcEntryFile: build/release.wasm does not exist')
+        expect(e.message).toEqual(
+          "[vite-plugin-assemblyscript] srcEntryFile: build/release.wasm does not exist"
+        );
       }
     });
 
@@ -230,12 +233,8 @@ export function runTests(viteVersion: number, vitePackages: VitePackages) {
       await runTestWithRetry(vitePackages, false, true);
     });
 
-
-    it(`vite ${viteVersion}: should rebuild AssemblyScript on change and HMR`, async() => {
-
-      const server = await startDevServer(
-        vitePackages
-      );
+    it(`vite ${viteVersion}: should rebuild AssemblyScript on change and HMR`, async () => {
+      const server = await startDevServer(vitePackages);
 
       const browser = await createBrowser(true);
       const page = await browser.newPage();
@@ -243,13 +242,11 @@ export function runTests(viteVersion: number, vitePackages: VitePackages) {
       page.goto(server);
 
       // apply a source code change to trigger rebuild and HMR
-      const sourceCodeFile = 'e2e/src/as/assembly/index.ts'
-      const asSourceCode = readFileSync(sourceCodeFile, { encoding: 'utf-8' })
-      writeFileSync(sourceCodeFile, asSourceCode + ' ', { encoding: 'utf-8' })
+      const sourceCodeFile = "e2e/src/as/assembly/index.ts";
+      const asSourceCode = readFileSync(sourceCodeFile, { encoding: "utf-8" });
+      writeFileSync(sourceCodeFile, asSourceCode + " ", { encoding: "utf-8" });
 
-      await new Promise((r) => setTimeout(r, 3000)); 
-    })
-
-    
+      await new Promise((r) => setTimeout(r, 3000));
+    });
   });
 }
