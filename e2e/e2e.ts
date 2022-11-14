@@ -4,7 +4,6 @@
 import { jest } from "@jest/globals";
 import { firefox } from "playwright";
 
-// import type { RollupOutput } from "rollup";
 type RollupOutput = any;
 import vitePluginAssemblyScript from "../src/index.js";
 
@@ -14,28 +13,30 @@ import mime from "mime";
 import path from "path";
 import url from "url";
 import type { AddressInfo } from "net";
+import { readFileSync, writeFileSync } from "fs";
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
-type VitePackages =
-  | {
-      vite: typeof import("./vite3/node_modules/vite");
-    };
+type VitePackages = {
+  vite: typeof import("./vite3/node_modules/vite");
+};
 
 async function buildAndStartProdServer(
-  vitePackages: VitePackages
+  vitePackages: VitePackages,
+  config: any = {}
 ): Promise<string> {
   const { vite } = vitePackages;
 
   const result = await vite.build({
     root: __dirname,
     build: {
-      target: "esnext"
+      target: "esnext",
     },
-    plugins: [
-      vitePluginAssemblyScript()
-    ],
-    logLevel: "error"
+    plugins: [vitePluginAssemblyScript({
+      projectRoot: 'e2e/src/as',
+      ...config
+    })],
+    logLevel: "error",
   });
 
   if ("close" in result) {
@@ -43,13 +44,18 @@ async function buildAndStartProdServer(
   }
 
   const buildResult =
-    "output" in result ? result : ({ output: result.flatMap(({ output }) => output) } as RollupOutput);
+    "output" in result
+      ? result
+      : ({ output: result.flatMap(({ output }) => output) } as RollupOutput);
 
   const app = express();
   let port = 0;
 
   const bundle = Object.fromEntries(
-    buildResult.output.map(item => [item.fileName, item.type === "chunk" ? item.code : item.source])
+    buildResult.output.map((item) => [
+      item.fileName,
+      item.type === "chunk" ? item.code : item.source,
+    ])
   );
 
   app.use((req, res) => {
@@ -60,7 +66,8 @@ async function buildAndStartProdServer(
       res.header("Access-Control-Allow-Origin", "*");
       res.header("Access-Control-Allow-Methods", "*");
       const contentType = mime.lookup(filePath);
-      const contentTypeWithEncoding = contentType + (contentType.includes("text/") ? "; charset=utf-8" : "");
+      const contentTypeWithEncoding =
+        contentType + (contentType.includes("text/") ? "; charset=utf-8" : "");
       res.contentType(contentTypeWithEncoding);
       res.send(bundle[filePath]);
     } else {
@@ -69,8 +76,10 @@ async function buildAndStartProdServer(
   });
 
   const listen = async () =>
-    await new Promise<number>(resolve => {
-      const server = app.listen(0, "127.0.0.1", () => resolve((server.address() as AddressInfo).port));
+    await new Promise<number>((resolve) => {
+      const server = app.listen(0, "127.0.0.1", () =>
+        resolve((server.address() as AddressInfo).port)
+      );
     });
 
   port = await listen();
@@ -83,8 +92,10 @@ async function startDevServer(vitePackages: VitePackages): Promise<string> {
 
   const devServer = await vite.createServer({
     root: __dirname,
-    plugins: [vitePluginAssemblyScript()],
-    logLevel: "error"
+    plugins: [vitePluginAssemblyScript({
+      projectRoot: 'e2e/src/as'
+    })],
+    logLevel: "error",
   });
 
   await devServer.listen();
@@ -100,18 +111,20 @@ async function createBrowser(modernBrowser: boolean) {
   return await firefox.launch({
     firefoxUserPrefs: {
       // Simulate a legacy browser with ES modules support disabled
-      "dom.moduleScripts.enabled": modernBrowser
-    }
+      "dom.moduleScripts.enabled": modernBrowser,
+    },
   });
 }
 
 async function runTest(
   vitePackages: VitePackages,
   devServer: boolean,
-  modernBrowser: boolean
+  modernBrowser: boolean,
+  config?: any
 ) {
   const server = await (devServer ? startDevServer : buildAndStartProdServer)(
-    vitePackages
+    vitePackages,
+    config
   );
 
   const browser = await createBrowser(modernBrowser);
@@ -127,14 +140,19 @@ async function runTest(
     page.on("requestfailed", reject);
     page.on("crash", reject);
 
-    page.on("console", async message => {
+    page.on("console", async (message) => {
       // Expect no errors from console
       if (message.type() === "error") {
-        reject(new Error("Error message from browser console: " + message.text()));
+        reject(
+          new Error("Error message from browser console: " + message.text())
+        );
       }
 
       // Expect the log (see `src/content.ts`)
-      if (message.type() === "log" && message.text().startsWith(expectedLogPrefix)) {
+      if (
+        message.type() === "log" &&
+        message.text().startsWith(expectedLogPrefix)
+      ) {
         resolve(message.text());
       }
     });
@@ -143,7 +161,6 @@ async function runTest(
   expect(foundLog).toEqual(expectedLog);
 }
 
-// Vite 2 dev server test often fails with RequestError. Let's retry.
 const runTestWithRetry = async (...args: Parameters<typeof runTest>) => {
   const MAX_RETRY = 10;
   const RETRY_WAIT = 1000;
@@ -155,7 +172,7 @@ const runTestWithRetry = async (...args: Parameters<typeof runTest>) => {
     } catch (e) {
       // Retry on Playwright Request Error
       if (e._type === "Request" || i !== MAX_RETRY - 1) {
-        await new Promise(r => setTimeout(r, RETRY_WAIT));
+        await new Promise((r) => setTimeout(r, RETRY_WAIT));
         continue;
       }
 
@@ -168,12 +185,71 @@ export function runTests(viteVersion: number, vitePackages: VitePackages) {
   jest.setTimeout(60000);
 
   describe(`E2E test for Vite ${viteVersion}`, () => {
+
+    it(`vite ${viteVersion}: should fail with error that the source directory does not exist`, async () => {
+      try {
+        await buildAndStartProdServer(
+          vitePackages,  { 
+            projectRoot: 'foobar',
+          }
+        );
+      } catch (e) {
+        expect(e.message).toEqual('[vite-plugin-assemblyscript] projectRoot: foobar does not exist')
+      }
+    });
+
+    it(`vite ${viteVersion}: should fail with error that the source directory is not a directory`, async () => {
+      try {
+        await buildAndStartProdServer(
+          vitePackages,  { 
+            projectRoot: 'e2e/src/as/asconfig.json',
+          }
+        );
+      } catch (e) {
+        expect(e.message).toEqual('[vite-plugin-assemblyscript] projectRoot: e2e/src/as/asconfig.json is not a folder')
+      }
+    });
+
+    it(`vite ${viteVersion}: should fail with error that the srcEntryFile does not exist`, async () => {
+      try {
+        await buildAndStartProdServer(
+          vitePackages,  { 
+            srcEntryFile: 'build/release.wasm'
+          }
+        );
+      } catch (e) {
+        expect(e.message).toEqual('[vite-plugin-assemblyscript] srcEntryFile: build/release.wasm does not exist')
+      }
+    });
+
     it(`vite ${viteVersion}: should work on modern browser in Vite dev server`, async () => {
       await runTestWithRetry(vitePackages, true, true);
     });
 
-    it(`vite ${viteVersion}: should work on legacy browser`, async () => {
-      await runTestWithRetry(vitePackages, false, false);
+    it(`vite ${viteVersion}: should work on modern browser in Vite build mode`, async () => {
+      await runTestWithRetry(vitePackages, false, true);
     });
+
+
+    it(`vite ${viteVersion}: should rebuild AssemblyScript on change and HMR`, async() => {
+
+      const server = await startDevServer(
+        vitePackages
+      );
+
+      const browser = await createBrowser(true);
+      const page = await browser.newPage();
+
+      page.goto(server);
+
+      // apply a source code change to trigger rebuild and HMR
+      const sourceCodeFile = 'e2e/src/as/assembly/index.ts'
+      const asSourceCode = readFileSync(sourceCodeFile, { encoding: 'utf-8' })
+      writeFileSync(sourceCodeFile, asSourceCode + ' ', { encoding: 'utf-8' })
+
+      await new Promise((r) => setTimeout(r, 3000)); 
+    })
+
+    
   });
 }

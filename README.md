@@ -119,3 +119,8 @@ export default defineConfig({
   ]
 })
 ```
+
+## Contributors
+
+Thanks to Menci, the author of [vite-plugin-wasm](https://github.com/Menci/vite-plugin-wasm) 
+for providing a great project layout and e2e test code.

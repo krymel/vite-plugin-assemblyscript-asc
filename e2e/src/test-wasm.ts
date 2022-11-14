@@ -1,20 +1,8 @@
-import { parse } from "@jsona/openapi";
+import { add } from "./as/build/assembly";
 
-const expectedResult = {
-  value: {
-    openapi: "3.0.0",
-    info: { version: "0.1.0", title: "openapi" },
-    paths: {},
-    components: {}
-  },
-  errors: null
-};
-const actualResult = parse("{}");
-
-const expectedJson = JSON.stringify(expectedResult);
-const actualJson = JSON.stringify(actualResult);
-if (actualJson !== expectedJson) {
+const result = add(3, 4)
+if (result !== 7) {
   console.error(`
-          Expected ${expectedJson}
-          but got  ${actualJson}`);
+          Expected 7
+          but got ${result}`);
 }
