@@ -1,0 +1,10 @@
+{
+  "name": "vite-plugin-assemblscript-e2e",
+  "version": "1.0.0",
+  "main": "e2e.test.ts",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "install": "yarn --cwd vite3"
+  }
+}
