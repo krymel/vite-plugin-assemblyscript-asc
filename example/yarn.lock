@@ -730,10 +730,10 @@ update-browserslist-db@^1.0.9:
     escalade "^3.1.1"
     picocolors "^1.0.0"
 
-vite-plugin-assemblyscript-asc@^1.0.0:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/vite-plugin-assemblyscript-asc/-/vite-plugin-assemblyscript-asc-1.0.2.tgz#7cd152ff223ba4f40d5e39eb3ad12a4fcdbdd6bd"
-  integrity sha512-S9Cb7Lo8To4LytiDHp+RUnP00UzbQ3ZfnOM8zaSkOixyhv5zy00LIk5t7XlWCv65a5IKo5EmwJB/dDbfQXIa4A==
+vite-plugin-assemblyscript-asc@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/vite-plugin-assemblyscript-asc/-/vite-plugin-assemblyscript-asc-1.0.4.tgz#cc179c3942f3e74baf55ac91387faf9b6cc11e03"
+  integrity sha512-0o8EGCnTyJJH8ueNa7RFCETw+iyOoPX5nJBmfMvEtcU8NGGvXrgmEvfNMm6jrHg6jRSuOWetmXtBqLDm/ocXrw==
   dependencies:
     vite "^3"
 

@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-assemblyscript-asc",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "AssemblyScript plugin for Vite: HMR and source maps for AssemblyScript and synchronous WebAssembly module integration with ESM bindings",
   "main": "dist/index.js",
   "exports": {
