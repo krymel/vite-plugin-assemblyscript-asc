@@ -1,7 +1,7 @@
 # vite-plugin-assemblyscript-asc
 
 [![Test Status](https://img.shields.io/github/workflow/status/krymel/vite-plugin-assemblyscript/Test?style=flat-square)](https://github.com/krymel/vite-plugin-assemblyscript/actions?query=workflow%3ATest)
-[![npm](https://img.shields.io/npm/v/vite-plugin-assemblyscript?style=flat-square)](https://www.npmjs.com/package/vite-plugin-assemblyscript)
+[![npm](https://img.shields.io/npm/v/vite-plugin-assemblyscript-asc?style=flat-square)](https://www.npmjs.com/package/vite-plugin-assemblyscript-asc)
 [![License](https://img.shields.io/github/license/krymel/vite-plugin-assemblyscript?style=flat-square)](LICENSE)
 
 Add a AssemblyScript codebase to a Vite project with full HMR support and debug with source maps.
