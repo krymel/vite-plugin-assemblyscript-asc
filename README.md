@@ -10,7 +10,7 @@ and the typical `debug` and `release` build variants mapped to `vite dev` and `v
 
 ## Installation
 
-Supports Vite 3.x. Just install it:
+Just install it as:
 
 ```bash
 yarn add -D vite-plugin-assemblyscript-asc
