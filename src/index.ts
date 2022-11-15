@@ -67,7 +67,7 @@ export default function assemblyScriptPlugin(
   const baseScriptCmd = `${ascBinPathRoot} ${entryFilePath} --config ${options.projectRoot}${sep}${options.configFile} --target`;
 
   return {
-    name: "vite-plugin-assemblyscript",
+    name: "vite-plugin-assemblyscript-asc",
     handleHotUpdate({ file }) {
       if (
         file.indexOf(`${options.projectRoot}${sep}${options.srcMatch}`) > -1
