@@ -1,7 +1,7 @@
 import type { Plugin } from "vite";
 import { spawnSync } from "child_process";
 import { lstatSync, existsSync } from "fs";
-import { sep } from "path";
+import { resolve, sep } from "path";
 
 interface AssemblyScriptPluginOptions {
   srcMatch: string;
@@ -70,7 +70,7 @@ export default function assemblyScriptPlugin(
     name: "vite-plugin-assemblyscript-asc",
     handleHotUpdate({ file }) {
       if (
-        file.indexOf(`${options.projectRoot}${sep}${options.srcMatch}`) > -1
+        file.startsWith(resolve(options.projectRoot, options.srcMatch))
       ) {
         spawnAscCmd(baseScriptCmd, "debug");
       }
